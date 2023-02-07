@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section>
+    <p>From:</p>
+    
+    <div class="card" id="base-currency">
+      <div class="card-main">
+        <img src="static/assets/icons/{{base_currency}}.png" alt="{{ base_currency }} icon" onclick="open_currencies_list()">
+        <a onclick="openCurrenciesList()">{{ base_currency }}</a>
+        <input type="text" id="base-rate" value="1" onchange="updateRatesList(this.value)">
+      </div>
+      
+      <div class="card-dropdown" id="base-dropdown">
+        {% for currency in model.currencies %}
+        <div>
+          <a href="/{{currency}}"></a>
+          <img src="static/assets/icons/{{currency}}.png" alt="{{ currency }} icon">
+          <p>{{ currency }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <p>To:</p>
+    
+    <div class="rates-list">
+      {% for currency, rate, status in model.get_currencies() %}
+      <script>
+        currencies["{{currency}}"] = {{ rate }};
+      </script>
+      <div class="card">
+        <div class="card-main">
+          <img src="static/assets/icons/{{currency}}.png" alt="{{ currency }} icon">
+          <a class="currency" onclick="openDropdown('{{ currency }}', 'info')">{{ currency }}</a>
+          <p class="currency-rate" id="{{ currency }}"></p>
+          {% set chart_data = model.get_chart_data(currency) %}
+          <a onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
+            <img src="static/assets/icons/{{status}}.png" alt="{{ currency }} {{ status }}">
+          </a>
+        </div>
+        
+        <div class="card-dropdown" id="{{ currency }}-dropdown">
+          <div class="segmented-control">
+            <div class="sc-info">
+              <button onclick="openDropdown('{{ currency }}', 'info')">
+                Informations
+              </button>
+            </div>
+            <div class="sc-chart">
+              <button onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
+                Chart
+              </button>
+            </div>
+          </div>
+          
+          <div class="card-info">
+            {% for key, value in model.get_info(currency).items() %}
+            <p>{{ key }}: {{ value }}</p>
+            {% endfor %}
+          </div>
+        
+          <div class="card-chart">
+            <canvas id="{{ currency }}-canva"></canvas>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <script>
+        updateRatesList();
+      </script>
+    </div>
+  </section>
+{% endblock %}

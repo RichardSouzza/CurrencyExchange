@@ -1,0 +1,22 @@
+name: Update data
+
+on:
+  schedule:
+    - cron: "10 0 * * *"
+      timezone: Europe/London
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Update data
+      run: |
+        python -c "
+        from currencyexchange.model import CEModel
+        model = CEModel()
+        model.set_data('${{ secrets.API_KEY }}')
+        "
