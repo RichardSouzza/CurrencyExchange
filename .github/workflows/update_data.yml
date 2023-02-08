@@ -1,6 +1,11 @@
 name: Update data
 
 on:
+  push:
+    branches:
+      - master
+      - workflow
+  
   schedule:
     - cron: "10 0 * * *"
       timezone: Europe/London
@@ -20,3 +25,9 @@ jobs:
         model = CEModel()
         model.set_data('${{ secrets.API_KEY }}')
         "
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git add .
+        git commit -m "Update data"
+        git push origin workflow
+        
