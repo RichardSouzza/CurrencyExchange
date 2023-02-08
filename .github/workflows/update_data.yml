@@ -1,11 +1,6 @@
 name: Update data
 
 on:
-  push:
-    branches:
-      - master
-      - workflow
-  
   schedule:
     - cron: "10 0 * * *"
       timezone: Europe/London
