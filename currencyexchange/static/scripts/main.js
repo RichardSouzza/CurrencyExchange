@@ -50,13 +50,13 @@ function resetChanges (dropdown) {
     dropdown.style.display = "";
 }
 
-function showChart (canva, data) {
-    let canv = canva.getContext("2d");
+function showChart (canvas, data) {
+    let ctx = canvas.getContext("2d");
     let r, g, b;
     r = data[2][0];
     g = data[2][1];
     b = data[2][2];
-    let chart = new Chart(canv, {
+    let chart = new Chart(ctx, {
         type: "line",
         data: {
             labels: data[0],
