@@ -1,7 +1,7 @@
 # CurrencyExchange
 A Flask-based website that shows data for the world's major currencies.
 
-Link: [CurrencyExchange](https://currency-exchange-rxpg.onrender.com/)
+Link: [CurrencyExchange](https://currencyexchange.onrender.com/)
 
 ## Features
 - Built with [Flask](https://flask.palletsprojects.com/) framework
