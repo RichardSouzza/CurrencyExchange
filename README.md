@@ -35,7 +35,7 @@ Returns the data of all 33 available currencies.
 
 **Request Method:** GET
 
-**Request URL:** `https://currency-exchange-rxpg.onrender.com/currencies`
+**Request URL:** `https://currencyexchange.onrender.com/currencies`
 
 **Request Parameters**
 
