@@ -63,7 +63,7 @@ Returns the data of all 33 available currencies.
 from requests import get
 from json import dumps
 
-url = "https://currency-exchange-rxpg.onrender.com/currencies"
+url = "https://currencyexchange.onrender.com/currencies"
 
 params = {
     "currencies": "EUR, GBP, USD"
