@@ -262,9 +262,11 @@ button {
 }
 
 .code {
-  display: inline;
+  display: inline-flex;
+  max-width: 85vw;
   padding: 0.4vh 3vw;
   border-radius: 5px;
+  overflow-x: scroll;
   background: #f5f5f5;
   font-family: "Poppins";
 }
