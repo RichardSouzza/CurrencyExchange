@@ -21,7 +21,8 @@ class CEModel:
         chart_color = self.colors[currency]
         return [dates, quotes, chart_color]
     
-    def get_colors(self):
+    @staticmethod
+    def get_colors():
         with open("currencyexchange/static/assets/data/colors.json") as colors:
             return load(colors)
     
@@ -90,15 +91,13 @@ class CEModel:
         resp = get(url, params=params)
         data = resp.json()["data"]
         data = dict(sorted(data.items()))
-        count = 1
         
         print("Writing data.json...")
         
-        for currency in data.keys():
+        for count, currency in enumerate(data.keys()):
             loading = f"Loading {data[currency]['name']} data..."
-            print(f"{loading} {'[':>{40-len(loading)}}{count}/{len(self.currencies)}]")
+            print(f"{loading} {'[':>{40-len(loading)}}{count+1}/{len(self.currencies)}]")
             data[currency]["history"] = self.get_history(currency, apikey)
-            count += 1
         
         json_object = dumps(data, ensure_ascii=False, indent=4)
         with open("currencyexchange/data.json", "w") as data:

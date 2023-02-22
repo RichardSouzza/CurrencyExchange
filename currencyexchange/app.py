@@ -10,7 +10,6 @@ app = Flask(__name__)
 def home(base_currency="USD"):
     base_currency = base_currency.upper()
     model = CEModel(base_currency)
-    
     if base_currency not in model.currencies:
       abort(404)
     
