@@ -25,7 +25,7 @@
     <p>To:</p>
     
     <div class="rates-list">
-      {% for currency, rate, status in model.get_currencies() %}
+      {% for currency, rate, state in model.get_currencies_data() %}
       <script>
         currencies["{{currency}}"] = {{ rate }};
       </script>
@@ -36,7 +36,7 @@
           <p class="currency-rate" id="{{ currency }}"></p>
           {% set chart_data = model.get_chart_data(currency) %}
           <a onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
-            <img src="static/assets/icons/{{status}}.png" alt="{{ currency }} {{ status }}">
+            <img src="static/assets/icons/{{state}}.png" alt="{{ currency }} {{ state }}">
           </a>
         </div>
         
@@ -44,7 +44,7 @@
           <div class="segmented-control">
             <div class="sc-info">
               <button onclick="openDropdown('{{ currency }}', 'info')">
-                Informations
+                Information
               </button>
             </div>
             <div class="sc-chart">
@@ -55,7 +55,7 @@
           </div>
           
           <div class="card-info">
-            {% for key, value in model.get_info(currency).items() %}
+            {% for key, value in model.get_currency_info(currency).items() %}
             <p>{{ key }}: {{ value }}</p>
             {% endfor %}
           </div>

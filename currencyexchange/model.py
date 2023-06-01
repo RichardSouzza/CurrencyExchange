@@ -1,43 +1,55 @@
 import datetime
-from json import dumps, load
+import os
+from json import load
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 from requests import get
+
+
+path = os.path.dirname(__file__)
+username = os.environ.get("DATABASE_USER")
+password = os.environ.get("DATABASE_ACCESS_KEY")
+uri = f"mongodb+srv://{username}:{password}@cluster.tendgdt.mongodb.net/?retryWrites=true&w=majority"
+
+client = MongoClient(uri, server_api=ServerApi('1'))
+database = client["cluster"]
+collection = database["currencies"]
 
 
 class CEModel:
     def __init__(self, base_currency="USD"):
         self.base_currency = base_currency
-        self.data = self.get_data()
-        self.currencies = list(self.data.keys())
+        self.documents = list(self.get_documents())
+        self.currencies = list(self.get_currencies_codes())
         self.colors = self.get_colors()
     
-    @staticmethod
-    def format_value(value):
-        return f"{value:,.2f}".replace(",", " ")
-    
-    def get_chart_data(self, currency):
-        data = self.data[self.base_currency]["history"]
-        dates = list(data)
-        quotes = [value[currency] for value in data.values()]
+    def get_chart_data(self, currency) -> list:
+        history = self.get_currency_data(self.base_currency)["history"]
+        dates = list(history)
+        quotes = [value[currency] for value in history.values()]
         chart_color = self.colors[currency]
         return [dates, quotes, chart_color]
-    
+
     @staticmethod
-    def get_colors():
-        with open("currencyexchange/static/assets/data/colors.json") as colors:
+    def get_colors() -> list:
+        with open(os.path.join(path, "static/assets/data/colors.json")) as colors:
             return load(colors)
     
-    def get_currencies(self):
-        for currency, data in self.data.items():
-            rate = self.get_rate(currency)
-            status = self.get_status(currency)
-            yield currency, rate, status
+    def get_currencies_data(self):
+        for currency in self.currencies:
+            yield (
+                currency, self.get_currency_rate(currency), self.get_currency_status(currency)
+            )
     
-    @staticmethod
-    def get_data():
-        with open("currencyexchange/data.json", "r") as data:
-            return load(data)
+    def get_currencies_codes(self):
+        for document in self.documents:
+            yield document.get("code", "ERROR")
     
-    def get_history(self, base_currency, apikey):
+    def get_currency_data(self, currency) -> dict:
+        data = [document for document in self.documents if document["code"] == currency][0]
+        return data
+
+    def get_currency_history(self, base_currency, apikey) -> dict:
         url = "https://api.freecurrencyapi.com/v1/historical"
         today = datetime.date.today()
         date_from = today - datetime.timedelta(days=7)
@@ -61,23 +73,23 @@ class CEModel:
         
         return data
     
-    def get_info(self, currency):
-        data = self.data[currency]
+    def get_currency_info(self, currency) -> dict:
+        document = self.get_currency_data(currency)
         info = {
-          "Name": data["name"],
-          "Symbol": data["symbol_native"]
+          "Name": document["name"],
+          "Symbol": document["symbol_native"]
         }
         return info
     
-    def get_rate(self, currency, date=-1):
-        data = self.data[self.base_currency]
-        last = list(data["history"])[date]
-        rate = data["history"][last][currency]
+    def get_currency_rate(self, currency, date=-1) -> list:
+        history = self.get_currency_data(self.base_currency)["history"]
+        last_date = list(history)[date]
+        rate = history[last_date][currency]
         return rate
     
-    def get_status(self, currency):
-        before = float(self.get_rate(currency, -2))
-        after = float(self.get_rate(currency))
+    def get_currency_status(self, currency) -> str:
+        before = float(self.get_currency_rate(currency, -2))
+        after = float(self.get_currency_rate(currency))
         if before < after:
             return "increase"
         elif before == after:
@@ -85,22 +97,28 @@ class CEModel:
         else:
             return "decrease"
     
-    def set_data(self, apikey):
+    @staticmethod
+    def get_documents(filter={}, projection={}) -> object:
+        return collection.find(filter, projection)
+    
+    def set_data(self, apikey) -> None:
         url = "https://api.freecurrencyapi.com/v1/currencies"
         params = {"apikey": apikey}
         resp = get(url, params=params)
+        if resp.status_code != 200:
+            raise Exception(resp.json().get("message", f"Error {resp.status_code}"))
         data = resp.json()["data"]
         data = dict(sorted(data.items()))
         
-        print("Writing data.json...")
+        print("Writing documents...")
         
         for count, currency in enumerate(data.keys()):
             loading = f"Loading {data[currency]['name']} data..."
             print(f"{loading} {'[':>{40-len(loading)}}{count+1}/{len(self.currencies)}]")
-            data[currency]["history"] = self.get_history(currency, apikey)
+            data[currency]["history"] = self.get_currency_history(currency, apikey)
         
-        json_object = dumps(data, ensure_ascii=False, indent=4)
-        with open("currencyexchange/data.json", "w") as data:
-            data.write(json_object)
-        
+        documents = list(data.values())
+        collection.delete_many({})
+        collection.insert_many(documents)
+
         print("Finished process.")

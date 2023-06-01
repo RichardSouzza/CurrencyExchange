@@ -3,15 +3,17 @@ from currencyexchange.model import CEModel
 
 
 app = Flask(__name__)
+model = CEModel()
 
 
 @app.route("/")
 @app.route("/<base_currency>")
 def home(base_currency="USD"):
     base_currency = base_currency.upper()
-    model = CEModel(base_currency)
     if base_currency not in model.currencies:
-      abort(404)
+        abort(404)
+    else:
+        model.base_currency = base_currency
     
     return render_template(
         "home.html",
@@ -39,17 +41,15 @@ def api():
 
 @app.route("/currencies", methods=["GET"])
 def get_currencies():
-    model = CEModel()
     currencies = request.args.get(
         "currencies", default=",".join(model.currencies), type=str
     ).replace(" ", "").split(",")
     
-    data = {}
-    for currency in currencies:
-        if currency in model.currencies:
-            data[currency] = model.data[currency]
-    
-    return jsonify(data)
+    filter_query = {"code": {"$in": currencies}}
+    projection_query = {"_id": 0}
+    documents = list(model.get_documents(filter_query, projection_query))
+    documents = {document["code"]: document for document in documents}
+    return jsonify(documents)
 
 
 @app.errorhandler(404)
