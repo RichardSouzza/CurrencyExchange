@@ -29,7 +29,7 @@ python run.py
 ```
 
 ## API
-The Currency Exchange makes currency data available through its API.
+The CurrencyExchange makes currency data available through its API.
 
 ### Endpoints
 #### Currencies Endpoint
@@ -53,7 +53,7 @@ Returns the data of all 33 available currencies.
     <td>string</td>
     <td></td>
     <td>
-      A list of comma seperated currency
+      A list of comma separated currency
       codes which you want to get (EUR,USD,CAD)
       By default all available currencies will be shown
     </td>
