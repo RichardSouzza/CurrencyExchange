@@ -37,6 +37,7 @@ class CEModel:
     
     def get_currencies_data(self):
         for currency in self.currencies:
+            print(currency)
             yield (
                 currency, self.get_currency_rate(currency), self.get_currency_status(currency)
             )
@@ -99,7 +100,7 @@ class CEModel:
     
     @staticmethod
     def get_documents(filter={}, projection={}) -> object:
-        return collection.find(filter, projection)
+        return collection.find(filter, projection).sort("code", 1)
     
     def set_data(self, apikey) -> None:
         url = "https://api.freecurrencyapi.com/v1/currencies"
