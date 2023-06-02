@@ -9,31 +9,14 @@ Link: [CurrencyExchange](https://currencyexchange.onrender.com/)
 - Built with [Flask](https://flask.palletsprojects.com/) framework
 - Hosted on the [Render](https://render.com/) platform
 - Powered by data from [FreeCurrencyAPI](https://freecurrencyapi.com/)
-
-## Installation
-1. Clone the repository:
-```yaml
-git clone https://github.com/RichardSouzza/CurrencyExchange
-```
-2. Access the project folder:
-```yaml
-cd CurrencyExchange
-```
-3. Install the dependencies:
-```yaml
-pip install -r requirements.txt
-```
-4. Start the app:
-```yaml
-python run.py
-```
+- Store API data on [MongoDB Atlas](https://www.mongodb.com/atlas/database)
 
 ## API
 The CurrencyExchange makes currency data available through its API.
 
 ### Endpoints
 #### Currencies Endpoint
-Returns the data of all 33 available currencies.
+Returns data for selected currencies.
 
 **Request Method:** GET
 
