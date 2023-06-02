@@ -37,7 +37,6 @@ class CEModel:
     
     def get_currencies_data(self):
         for currency in self.currencies:
-            print(currency)
             yield (
                 currency, self.get_currency_rate(currency), self.get_currency_status(currency)
             )
