@@ -17,7 +17,7 @@ def home(base_currency="USD"):
     
     return render_template(
         "home.html",
-        title="Currency Exchange",
+        title="CurrencyExchange",
         base_currency=base_currency,
         model=model
     )
@@ -27,7 +27,7 @@ def home(base_currency="USD"):
 def about():
     return render_template(
         "about.html",
-        title="About – Currency Exchange"
+        title="About – CurrencyExchange"
     )
 
 
@@ -35,7 +35,7 @@ def about():
 def api():
     return render_template(
         "api.html",
-        title="API – Currency Exchange"
+        title="API – CurrencyExchange"
     )
 
 
@@ -56,5 +56,5 @@ def get_currencies():
 def page_not_found(error):
     return render_template(
         "404.html",
-        title="404 – Currency Exchange"
+        title="404 – CurrencyExchange"
     ), 404
