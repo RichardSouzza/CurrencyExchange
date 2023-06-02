@@ -30,7 +30,7 @@
           <td>string</td>
           <td></td>
           <td>
-            A list of comma seperated currency
+            A list of comma separated currency
             codes which you want to get (EUR,USD,CAD)
             By default all available currencies will be shown
           </td>
@@ -47,7 +47,7 @@ from json import dumps
 url = "https://currencyexchange.onrender.com/currencies"
 
 params = {
-    "currencies": "EUR, GBP, USD"
+    "currencies": "EUR, USD, CAD"
 }
 
 resp = get(url, params=params)
@@ -62,79 +62,53 @@ print(dumps(data, indent=4))
     <pre>
       <code class="language-json">
 {
-    "USD": {
-        "symbol": "$",
-        "name": "US Dollar",
-        "symbol_native": "$",
+    "EUR": {
+        "code": "EUR",
         "decimal_digits": 2,
-        "rounding": 0,
-        "code": "USD",
-        "name_plural": "US dollars",
         "history": {
-            "2023-01-29": {
-                "AUD": 1.4069,
-                "BGN": 1.7978,
-                "BRL": 5.1092,
-                ...
-                "TRY": 18.8126,
-                "USD": 1,
-                "ZAR": 17.2094
+            "2023-05-24": {
+                "AUD": 1.6434,
+                "BGN": 1.9536,
+                "BRL": 5.3349,
+                "..."
+                "TRY": 21.4166,
+                "USD": 1.0756,
+                "ZAR": 20.696
             },
-            "2023-01-30": {
-                "AUD": 1.4171,
-                "BGN": 1.7997,
-                "BRL": 5.1163,
-                ...
-                "TRY": 18.813,
-                "USD": 1,
-                "ZAR": 17.3935
+            "2023-05-25": {
+                "AUD": 1.6503,
+                "BGN": 1.9556,
+                "BRL": 5.4014,
+                "..."
+                "TRY": 21.4261,
+                "USD": 1.0724,
+                "ZAR": 21.2226
             },
-            "2023-01-31": {
-                "AUD": 1.4182,
-                "BGN": 1.8031,
-                "BRL": 5.0733,
-                ...
-                "TRY": 18.8122,
-                "USD": 1,
-                "ZAR": 17.4168
+            "..."
+            "2023-05-29": {
+                "AUD": 1.6402,
+                "BGN": 1.9557,
+                "BRL": 5.3746,
+                "..."
+                "TRY": 21.5727,
+                "USD": 1.0707,
+                "ZAR": 21.0558
             },
-            "2023-02-01": {
-                "AUD": 1.3996,
-                "BGN": 1.795,
-                "BRL": 5.055,
-                ...
-                "TRY": 18.8168,
-                "USD": 1,
-                "ZAR": 17.0325
-            },
-            "2023-02-02": {
-                "AUD": 1.4136,
-                "BGN": 1.7929,
-                "BRL": 5.0507,
-                ...
-                "TRY": 18.8172,
-                "USD": 1,
-                "ZAR": 17.084
-            },
-            "2023-02-03": {
-                "AUD": 1.4443,
-                "BGN": 1.8121,
-                "BRL": 5.1525,
-                ...
-                "TRY": 18.8199,
-                "USD": 1,
-                "ZAR": 17.4675
-            },
-            "2023-02-04": {
-                "AUD": 1.4447,
-                "BGN": 1.8093,
-                "BRL": 5.1518,
-                ...
-                "TRY": 18.8236,
-                "USD": 1,
-                "ZAR": 17.4678
+            "2023-05-30": {
+                "AUD": 1.6465,
+                "BGN": 1.9556,
+                "BRL": 5.4046,
+                "..."
+                "TRY": 22.1244,
+                "USD": 1.0731,
+                "ZAR": 21.1276
             }
-        }
+        },
+        "name": "Euro",
+        "name_plural": "Euros",
+        "rounding": 0,
+        "symbol": "€",
+        "symbol_native": "€"
     }
 }
         </code>
