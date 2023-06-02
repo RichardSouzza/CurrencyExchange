@@ -8,7 +8,7 @@
       <div class="card-main">
         <img src="static/assets/icons/{{base_currency}}.png" alt="{{ base_currency }} icon" onclick="open_currencies_list()">
         <a onclick="openCurrenciesList()">{{ base_currency }}</a>
-        <input type="text" id="base-rate" value="1" onchange="updateRatesList(this.value)">
+        <input type="number" id="base-rate" value="1" min="1" onchange="updateRatesList(this.value)">
       </div>
       
       <div class="card-dropdown" id="base-dropdown">
