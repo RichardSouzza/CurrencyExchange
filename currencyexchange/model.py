@@ -7,6 +7,7 @@ from requests import get
 
 
 path = os.path.dirname(__file__)
+apikey = os.environ.get("API_KEY")
 username = os.environ.get("DATABASE_USER")
 password = os.environ.get("DATABASE_ACCESS_KEY")
 uri = f"mongodb+srv://{username}:{password}@cluster.tendgdt.mongodb.net/?retryWrites=true&w=majority"
@@ -19,9 +20,13 @@ collection = database["currencies"]
 class CEModel:
     def __init__(self, base_currency="USD"):
         self.base_currency = base_currency
-        self.documents = list(self.get_documents())
+        self.documents = self.get_documents()
         self.currencies = list(self.get_currencies_codes())
         self.colors = self.get_colors()
+    
+    @staticmethod
+    def close_database_connection():
+        client.close()
     
     def get_chart_data(self, currency) -> list:
         history = self.get_currency_data(self.base_currency)["history"]
@@ -99,9 +104,12 @@ class CEModel:
     
     @staticmethod
     def get_documents(filter={}, projection={}) -> object:
-        return collection.find(filter, projection).sort("code", 1)
-    
-    def set_data(self, apikey) -> None:
+        cursor = collection.find(filter, projection).sort("code", 1)
+        documents = list(cursor)
+        cursor.close()
+        return documents
+
+    def set_data(self) -> None:
         url = "https://api.freecurrencyapi.com/v1/currencies"
         params = {"apikey": apikey}
         resp = get(url, params=params)

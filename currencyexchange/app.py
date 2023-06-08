@@ -47,7 +47,7 @@ def get_currencies():
     
     filter_query = {"code": {"$in": currencies}}
     projection_query = {"_id": 0}
-    documents = list(model.get_documents(filter_query, projection_query))
+    documents = model.get_documents(filter_query, projection_query)
     documents = {document["code"]: document for document in documents}
     return jsonify(documents)
 
@@ -58,3 +58,9 @@ def page_not_found(error):
         "404.html",
         title="404 – CurrencyExchange"
     ), 404
+
+
+@app.teardown_request
+def close_database_connection(error):
+    if not request.path.startswith("/static/"):
+        model.close_database_connection()
