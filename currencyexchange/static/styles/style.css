@@ -118,9 +118,8 @@ footer a {
   min-height: 30px;
 }
 
-.card-main p {
-  flex-basis: 100%;
-  text-align: right;
+.card-main .currency-rate {
+  margin-left: auto;
 }
 
 .card-dropdown {
@@ -141,6 +140,14 @@ footer a {
 .segmented-control * {
   width: 50%;
   padding: .2vh 0;
+}
+
+.sc-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .sc-info {
@@ -166,12 +173,13 @@ footer a {
 
 .card-chart {
   display: none;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 canvas {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 97%;
+  max-height: 40vh;
 }
 
 button {
@@ -275,7 +283,7 @@ button {
   margin: 5vh 0 3vh;
 }
 
-.table-coteiner {
+.table-container {
   max-width: 85vw;
   overflow-x: scroll;
   text-align: center;

@@ -4,10 +4,10 @@
   <section>
     <p>From:</p>
     
-    <div class="card" id="base-currency">
+    <div class="card" id="base-currency" onclick="openCurrenciesList(event)">
       <div class="card-main">
-        <img src="static/assets/icons/{{base_currency}}.png" alt="{{ base_currency }} icon" onclick="open_currencies_list()">
-        <a onclick="openCurrenciesList()">{{ base_currency }}</a>
+        <img src="static/assets/icons/{{base_currency}}.png" alt="{{ base_currency }} icon">
+        <p>{{ base_currency }}</p>
         <input type="number" id="base-rate" value="1" min="1" onchange="updateRatesList(this.value)">
       </div>
       
@@ -43,12 +43,12 @@
         <div class="card-dropdown" id="{{ currency }}-dropdown">
           <div class="segmented-control">
             <div class="sc-info">
-              <button onclick="openDropdown('{{ currency }}', 'info')">
+              <button class="sc-button" onclick="openDropdown('{{ currency }}', 'info')">
                 Information
               </button>
             </div>
             <div class="sc-chart">
-              <button onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
+              <button class="sc-button" onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
                 Chart
               </button>
             </div>
