@@ -15,17 +15,8 @@ jobs:
       
     - name: Update data
       run: |
-        git pull
         python -c "
         from currencyexchange.model import CEModel
         model = CEModel()
-        model.set_data('${{ secrets.API_KEY }}')
+        model.set_data()
         "
-     
-    - name: Push changes
-      run: |
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
-        git add .
-        git commit -m "Update data"
-        git push

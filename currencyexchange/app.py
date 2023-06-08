@@ -3,19 +3,21 @@ from currencyexchange.model import CEModel
 
 
 app = Flask(__name__)
+model = CEModel()
 
 
 @app.route("/")
 @app.route("/<base_currency>")
 def home(base_currency="USD"):
     base_currency = base_currency.upper()
-    model = CEModel(base_currency)
     if base_currency not in model.currencies:
-      abort(404)
+        abort(404)
+    else:
+        model.base_currency = base_currency
     
     return render_template(
         "home.html",
-        title="Currency Exchange",
+        title="CurrencyExchange",
         base_currency=base_currency,
         model=model
     )
@@ -25,7 +27,7 @@ def home(base_currency="USD"):
 def about():
     return render_template(
         "about.html",
-        title="About – Currency Exchange"
+        title="About – CurrencyExchange"
     )
 
 
@@ -33,28 +35,32 @@ def about():
 def api():
     return render_template(
         "api.html",
-        title="API – Currency Exchange"
+        title="API – CurrencyExchange"
     )
 
 
 @app.route("/currencies", methods=["GET"])
 def get_currencies():
-    model = CEModel()
     currencies = request.args.get(
         "currencies", default=",".join(model.currencies), type=str
     ).replace(" ", "").split(",")
     
-    data = {}
-    for currency in currencies:
-        if currency in model.currencies:
-            data[currency] = model.data[currency]
-    
-    return jsonify(data)
+    filter_query = {"code": {"$in": currencies}}
+    projection_query = {"_id": 0}
+    documents = model.get_documents(filter_query, projection_query)
+    documents = {document["code"]: document for document in documents}
+    return jsonify(documents)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template(
         "404.html",
-        title="404 – Currency Exchange"
+        title="404 – CurrencyExchange"
     ), 404
+
+
+@app.teardown_request
+def close_database_connection(error):
+    if not request.path.startswith("/static/"):
+        model.close_database_connection()

@@ -4,11 +4,11 @@
   <section>
     <p>From:</p>
     
-    <div class="card" id="base-currency">
+    <div class="card" id="base-currency" onclick="openCurrenciesList(event)">
       <div class="card-main">
-        <img src="static/assets/icons/{{base_currency}}.png" alt="{{ base_currency }} icon" onclick="open_currencies_list()">
-        <a onclick="openCurrenciesList()">{{ base_currency }}</a>
-        <input type="text" id="base-rate" value="1" onchange="updateRatesList(this.value)">
+        <img src="static/assets/icons/{{base_currency}}.png" alt="{{ base_currency }} icon">
+        <p>{{ base_currency }}</p>
+        <input type="number" id="base-rate" value="1" min="1" onchange="updateRatesList(this.value)">
       </div>
       
       <div class="card-dropdown" id="base-dropdown">
@@ -25,7 +25,7 @@
     <p>To:</p>
     
     <div class="rates-list">
-      {% for currency, rate, status in model.get_currencies() %}
+      {% for currency, rate, state in model.get_currencies_data() %}
       <script>
         currencies["{{currency}}"] = {{ rate }};
       </script>
@@ -36,32 +36,32 @@
           <p class="currency-rate" id="{{ currency }}"></p>
           {% set chart_data = model.get_chart_data(currency) %}
           <a onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
-            <img src="static/assets/icons/{{status}}.png" alt="{{ currency }} {{ status }}">
+            <img src="static/assets/icons/{{state}}.png" alt="{{ currency }} {{ state }}">
           </a>
         </div>
         
         <div class="card-dropdown" id="{{ currency }}-dropdown">
           <div class="segmented-control">
             <div class="sc-info">
-              <button onclick="openDropdown('{{ currency }}', 'info')">
-                Informations
+              <button class="sc-button" onclick="openDropdown('{{ currency }}', 'info')">
+                Information
               </button>
             </div>
             <div class="sc-chart">
-              <button onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
+              <button class="sc-button" onclick="openDropdown('{{ currency }}', 'chart', {{ chart_data }})">
                 Chart
               </button>
             </div>
           </div>
           
           <div class="card-info">
-            {% for key, value in model.get_info(currency).items() %}
+            {% for key, value in model.get_currency_info(currency).items() %}
             <p>{{ key }}: {{ value }}</p>
             {% endfor %}
           </div>
         
           <div class="card-chart">
-            <canvas id="{{ currency }}-canva"></canvas>
+            <canvas id="{{ currency }}-canvas"></canvas>
           </div>
         </div>
       </div>

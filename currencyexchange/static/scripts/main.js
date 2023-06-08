@@ -10,12 +10,14 @@ function formatValue (value) {
     ).replace(",", " ");
 }
 
-function openCurrenciesList () {
-    let dropdown = document.querySelector("#base-dropdown");
-    if (dropdown.style.display == "") {
-        dropdown.style.display = "grid";
-    } else {
-        dropdown.style.display = "";
+function openCurrenciesList (event) {
+    if (event.target.tagName !== "INPUT") {
+        let dropdown = document.querySelector("#base-dropdown");
+        if (dropdown.style.display == "") {
+            dropdown.style.display = "grid";
+        } else {
+            dropdown.style.display = "";
+        }
     }
 }
 
@@ -23,18 +25,22 @@ function openDropdown (dropdown_id, type, data) {
     let dropdown = document.querySelector(`#${dropdown_id}-dropdown`);
     let seg_control = dropdown.querySelector(`.sc-${type}`);
     let card = dropdown.querySelector(`.card-${type}`);
-    let canva = document.querySelector(`#${dropdown_id}-canva`);
-    
+    let canvas = document.querySelector(`#${dropdown_id}-canvas`);
+
     if (card.style.display == "") {
         resetChanges(dropdown);
         dropdown.style.display = "flex";
         seg_control.style.background = "#dfdfdf";
         card.style.display = "flex";
         if (typeof(data) != "undefined") {
-            showChart(canva, data);
+            showChart(canvas, data);
         }
     } else {
         resetChanges(dropdown);
+        chart = Chart.getChart(canvas)
+        if (chart) {
+            chart.destroy();
+        }
     }
 }
 

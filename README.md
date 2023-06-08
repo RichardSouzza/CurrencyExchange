@@ -9,31 +9,14 @@ Link: [CurrencyExchange](https://currencyexchange.onrender.com/)
 - Built with [Flask](https://flask.palletsprojects.com/) framework
 - Hosted on the [Render](https://render.com/) platform
 - Powered by data from [FreeCurrencyAPI](https://freecurrencyapi.com/)
-
-## Installation
-1. Clone the repository:
-```yaml
-git clone https://github.com/RichardSouzza/CurrencyExchange
-```
-2. Access the project folder:
-```yaml
-cd CurrencyExchange
-```
-3. Install the dependencies:
-```yaml
-pip install -r requirements.txt
-```
-4. Start the app:
-```yaml
-python run.py
-```
+- Store API data on [MongoDB Atlas](https://www.mongodb.com/atlas/database)
 
 ## API
-The Currency Exchange makes currency data available through its API.
+The CurrencyExchange makes currency data available through its API.
 
 ### Endpoints
 #### Currencies Endpoint
-Returns the data of all 33 available currencies.
+Returns data for selected currencies.
 
 **Request Method:** GET
 
@@ -53,7 +36,7 @@ Returns the data of all 33 available currencies.
     <td>string</td>
     <td></td>
     <td>
-      A list of comma seperated currency
+      A list of comma separated currency
       codes which you want to get (EUR,USD,CAD)
       By default all available currencies will be shown
     </td>
@@ -68,7 +51,7 @@ from json import dumps
 url = "https://currencyexchange.onrender.com/currencies"
 
 params = {
-    "currencies": "EUR, GBP, USD"
+    "currencies": "EUR, USD, CAD"
 }
 
 resp = get(url, params=params)
@@ -82,53 +65,53 @@ print(dumps(data, indent=4))
 
 ```json
 {
-    "USD": {
-        "symbol": "$",
-        "name": "US Dollar",
-        "symbol_native": "$",
+    "EUR": {
+        "code": "EUR",
         "decimal_digits": 2,
-        "rounding": 0,
-        "code": "USD",
-        "name_plural": "US dollars",
         "history": {
-            "2023-01-29": {
-                "AUD": 1.4069,
-                "BGN": 1.7978,
-                "BRL": 5.1092,
+            "2023-05-24": {
+                "AUD": 1.6434,
+                "BGN": 1.9536,
+                "BRL": 5.3349,
                 "..."
-                "TRY": 18.8126,
-                "USD": 1,
-                "ZAR": 17.2094
+                "TRY": 21.4166,
+                "USD": 1.0756,
+                "ZAR": 20.696
             },
-            "2023-01-30": {
-                "AUD": 1.4171,
-                "BGN": 1.7997,
-                "BRL": 5.1163,
+            "2023-05-25": {
+                "AUD": 1.6503,
+                "BGN": 1.9556,
+                "BRL": 5.4014,
                 "..."
-                "TRY": 18.813,
-                "USD": 1,
-                "ZAR": 17.3935
+                "TRY": 21.4261,
+                "USD": 1.0724,
+                "ZAR": 21.2226
             },
             "..."
-            "2023-02-03": {
-                "AUD": 1.4443,
-                "BGN": 1.8121,
-                "BRL": 5.1525,
+            "2023-05-29": {
+                "AUD": 1.6402,
+                "BGN": 1.9557,
+                "BRL": 5.3746,
                 "..."
-                "TRY": 18.8199,
-                "USD": 1,
-                "ZAR": 17.4675
+                "TRY": 21.5727,
+                "USD": 1.0707,
+                "ZAR": 21.0558
             },
-            "2023-02-04": {
-                "AUD": 1.4447,
-                "BGN": 1.8093,
-                "BRL": 5.1518,
+            "2023-05-30": {
+                "AUD": 1.6465,
+                "BGN": 1.9556,
+                "BRL": 5.4046,
                 "..."
-                "TRY": 18.8236,
-                "USD": 1,
-                "ZAR": 17.4678
+                "TRY": 22.1244,
+                "USD": 1.0731,
+                "ZAR": 21.1276
             }
-        }
+        },
+        "name": "Euro",
+        "name_plural": "Euros",
+        "rounding": 0,
+        "symbol": "€",
+        "symbol_native": "€"
     }
 }
 ```
