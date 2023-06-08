@@ -23,7 +23,7 @@ function openDropdown (dropdown_id, type, data) {
     let dropdown = document.querySelector(`#${dropdown_id}-dropdown`);
     let seg_control = dropdown.querySelector(`.sc-${type}`);
     let card = dropdown.querySelector(`.card-${type}`);
-    let canva = document.querySelector(`#${dropdown_id}-canva`);
+    let canvas = document.querySelector(`#${dropdown_id}-canvas`);
     
     if (card.style.display == "") {
         resetChanges(dropdown);
@@ -31,7 +31,7 @@ function openDropdown (dropdown_id, type, data) {
         seg_control.style.background = "#dfdfdf";
         card.style.display = "flex";
         if (typeof(data) != "undefined") {
-            showChart(canva, data);
+            showChart(canvas, data);
         }
     } else {
         resetChanges(dropdown);
