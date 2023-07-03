@@ -3,7 +3,6 @@ name: Update data
 on:
   schedule:
     - cron: "00 00 * * *"
-      timezone: Europe/London
 
 jobs:
   update_data:
