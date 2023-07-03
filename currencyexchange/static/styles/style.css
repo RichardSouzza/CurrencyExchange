@@ -182,6 +182,12 @@ canvas {
   max-height: 40vh;
 }
 
+@media (max-width: 635px) {
+  canvas {
+    max-width: 100%;
+  }
+}
+
 button {
   width: 100%;
   height: 100%;
