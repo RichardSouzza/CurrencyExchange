@@ -1,4 +1,5 @@
 import datetime
+import time
 import os
 from json import load
 from pymongo import MongoClient
@@ -7,12 +8,11 @@ from requests import get
 
 
 path = os.path.dirname(__file__)
-apikey = os.environ.get("API_KEY")
 username = os.environ.get("DATABASE_USER")
 password = os.environ.get("DATABASE_ACCESS_KEY")
 uri = f"mongodb+srv://{username}:{password}@cluster.tendgdt.mongodb.net/?retryWrites=true&w=majority"
 
-client = MongoClient(uri, server_api=ServerApi('1'))
+client = MongoClient(uri, server_api=ServerApi("1"))
 database = client["cluster"]
 collection = database["currencies"]
 
@@ -66,8 +66,11 @@ class CEModel:
             "base_currency": base_currency
         }
         resp = get(url, params=params)
-        data = resp.json()["data"]
-        
+        try:
+            data = resp.json()["data"]
+        except KeyError:
+            raise APIRequestError(resp)
+
         for date, history in data.items():
             difference = list(set(self.currencies) - set(history.keys()))
             if any(difference):
@@ -109,13 +112,14 @@ class CEModel:
         cursor.close()
         return documents
 
-    def set_data(self) -> None:
+    def update_data(self, apikey) -> None:
         url = "https://api.freecurrencyapi.com/v1/currencies"
         params = {"apikey": apikey}
         resp = get(url, params=params)
-        if resp.status_code != 200:
-            raise Exception(resp.json().get("message", f"Error {resp.status_code}"))
-        data = resp.json()["data"]
+        try:
+            data = resp.json()["data"]
+        except KeyError:
+            raise APIRequestError(resp)
         data = dict(sorted(data.items()))
         
         print("Writing documents...")
@@ -124,9 +128,20 @@ class CEModel:
             loading = f"Loading {data[currency]['name']} data..."
             print(f"{loading} {'[':>{40-len(loading)}}{count+1}/{len(self.currencies)}]")
             data[currency]["history"] = self.get_currency_history(currency, apikey)
+            time.sleep(6)
         
         documents = list(data.values())
         collection.delete_many({})
         collection.insert_many(documents)
-
         print("Finished process.")
+
+
+class APIRequestError(Exception):
+    def __init__(self, error) -> None:
+        self.error = error
+        super().__init__()
+
+    def __str__(self) -> str:
+        status_code = self.error.status_code
+        message = self.error.json().get("message", f"Error {status_code}")
+        return message

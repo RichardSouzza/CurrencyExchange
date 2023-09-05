@@ -27,5 +27,5 @@ jobs:
         python -c "
         from currencyexchange.model import CEModel
         model = CEModel()
-        model.set_data()
+        model.set_data('${{ env.API_KEY }}')
         "
