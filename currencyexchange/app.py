@@ -64,3 +64,7 @@ def page_not_found(error):
 def close_database_connection(error):
     if not request.path.startswith("/static/"):
         model.close_database_connection()
+
+
+if __name__ == "__main__":
+    app.run()
