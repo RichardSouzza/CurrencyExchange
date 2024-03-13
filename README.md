@@ -1,7 +1,7 @@
 # CurrencyExchange
 A Flask-based website that shows data for the world's major currencies.
 
-Link: [CurrencyExchange](https://currencyexchange.onrender.com/)
+Link: [CurrencyExchange](https://currencyexchangs.vercel.app)
 
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FRichardSouzza%2FCurrencyExchange&countColor=%23263759)
 
@@ -20,7 +20,7 @@ Returns data for selected currencies.
 
 **Request Method:** GET
 
-**Request URL:** `https://currencyexchange.onrender.com/currencies`
+**Request URL:** `https://currencyexchangs.vercel.app/currencies`
 
 **Request Parameters**
 
@@ -48,7 +48,7 @@ Returns data for selected currencies.
 from requests import get
 from json import dumps
 
-url = "https://currencyexchange.onrender.com/currencies"
+url = "https://currencyexchangs.vercel.app/currencies"
 
 params = {
     "currencies": "EUR, USD, CAD"
