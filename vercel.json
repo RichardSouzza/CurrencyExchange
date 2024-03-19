@@ -4,6 +4,10 @@
     {
       "src": "/currencyexchange/app.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "/run.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
