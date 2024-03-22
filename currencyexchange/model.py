@@ -1,5 +1,3 @@
-import datetime
-import time
 import os
 from json import load
 from pymongo import MongoClient
@@ -29,11 +27,11 @@ class CEModel:
         client.close()
     
     def get_chart_data(self, currency) -> list:
-        history = self.get_currency_data(self.base_currency)["history"]
+        history = self.get_currency_history(currency)
         dates = list(history)
         quotes = [value[currency] for value in history.values()]
         chart_color = self.colors[currency]
-        return [dates, quotes, chart_color]
+        return dates, quotes, chart_color
 
     @staticmethod
     def get_colors() -> list:
@@ -50,47 +48,40 @@ class CEModel:
         for document in self.documents:
             yield document.get("code", "ERROR")
     
-    def get_currency_data(self, currency) -> dict:
-        data = [document for document in self.documents if document["code"] == currency][0]
-        return data
+    def get_currency_document(self, currency) -> dict:
+        for document in self.documents:
+            if document["code"] == currency:
+                return document
 
-    def get_currency_history(self, base_currency, apikey) -> dict:
-        url = "https://api.freecurrencyapi.com/v1/historical"
-        today = datetime.date.today()
-        date_from = today - datetime.timedelta(days=7)
-        date_to = today - datetime.timedelta(days=1)
-        params = {
-            "apikey": apikey,
-            "date_from": date_from,
-            "date_to": date_to,
-            "base_currency": base_currency
-        }
-        resp = get(url, params=params)
-        try:
-            data = resp.json()["data"]
-        except KeyError:
-            raise APIRequestError(resp)
-
-        for date, history in data.items():
-            difference = list(set(self.currencies) - set(history.keys()))
-            if any(difference):
-                data[date][difference[0]] = 0
-                data[date] = dict(sorted(data[date].items()))
-            for currency, rate in history.items():
-                data[date][currency] = round(rate, 4)
-        
-        return data
+    def get_currency_history(self, currency) -> dict:
+        document = self.get_currency_document(currency)
+        history = document["history"]
+        return history
+    
+    def get_new_currency_history(self, base_currency) -> dict:
+        lowercase_base_currency = base_currency.lower()
+        url = f"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/{lowercase_base_currency}.json"
+        resp = get(url)
+        data = resp.json()
+        rates = self.filter_data(data, lowercase_base_currency)
+        history = self.get_currency_history(base_currency)
+        new_history = {**history, **{data["date"]: rates}}
+        return new_history
     
     def get_currency_info(self, currency) -> dict:
-        document = self.get_currency_data(currency)
+        document = self.get_currency_document(currency)
         info = {
           "Name": document["name"],
           "Symbol": document["symbol_native"]
         }
         return info
     
+    def get_currency_name(self, currency) -> str:
+        document = self.get_currency_document(currency)
+        return document["name"]
+
     def get_currency_rate(self, currency, date=-1) -> list:
-        history = self.get_currency_data(self.base_currency)["history"]
+        history = self.get_currency_history(currency)
         last_date = list(history)[date]
         rate = history[last_date][currency]
         return rate
@@ -112,36 +103,21 @@ class CEModel:
         cursor.close()
         return documents
 
-    def update_data(self, apikey) -> None:
-        url = "https://api.freecurrencyapi.com/v1/currencies"
-        params = {"apikey": apikey}
-        resp = get(url, params=params)
-        try:
-            data = resp.json()["data"]
-        except KeyError:
-            raise APIRequestError(resp)
-        data = dict(sorted(data.items()))
+    def filter_data(self, data, base_currency):
+        filtered_data = {}
+        for key, value in data[base_currency].items():
+            if key.upper() in self.currencies:
+                filtered_data[key.upper()] = value
+        return filtered_data
+
+    def update_data(self) -> None:
+        print("Updating documents...")
         
-        print("Writing documents...")
-        
-        for count, currency in enumerate(data.keys()):
-            loading = f"Loading {data[currency]['name']} data..."
+        for count, currency in enumerate(self.currencies):
+            currency_name = self.get_currency_name(currency)
+            loading = f"Loading {currency_name} data..."
             print(f"{loading} {'[':>{40-len(loading)}}{count+1}/{len(self.currencies)}]")
-            data[currency]["history"] = self.get_currency_history(currency, apikey)
-            time.sleep(6)
+            history = self.get_new_currency_history(currency)
+            collection.update_one({"code": currency}, {"$set": {"history": history}})
         
-        documents = list(data.values())
-        collection.delete_many({})
-        collection.insert_many(documents)
         print("Finished process.")
-
-
-class APIRequestError(Exception):
-    def __init__(self, error) -> None:
-        self.error = error
-        super().__init__()
-
-    def __str__(self) -> str:
-        status_code = self.error.status_code
-        message = self.error.json().get("message", f"Error {status_code}")
-        return message

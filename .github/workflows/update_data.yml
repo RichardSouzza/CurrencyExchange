@@ -20,12 +20,11 @@ jobs:
     
     - name: Update data
       env:
-        API_KEY: ${{ secrets.API_KEY }}
         DATABASE_ACCESS_KEY: ${{ secrets.DATABASE_ACCESS_KEY }}
         DATABASE_USER: ${{ secrets.DATABASE_USER }}
       run: |
         python -c "
         from currencyexchange.model import CEModel
         model = CEModel()
-        model.update_data('${{ env.API_KEY }}')
+        model.update_data()
         "
