@@ -8,7 +8,7 @@ Link: [CurrencyExchange](https://currencyexchangs.vercel.app)
 ## Features
 - Built with [Flask](https://flask.palletsprojects.com/) framework
 - Hosted on the [Vercel](https://vercel.com/) platform
-- Powered by data from [FreeCurrencyAPI](https://freecurrencyapi.com/)
+- Powered by data from [Free Currency Exchange Rates API](https://github.com/fawazahmed0/exchange-api)
 - Store API data on [MongoDB Atlas](https://www.mongodb.com/atlas/database)
 
 ## API
