@@ -58,16 +58,6 @@ class CEModel:
         history = document["history"]
         return history
     
-    def get_new_currency_history(self, base_currency) -> dict:
-        lowercase_base_currency = base_currency.lower()
-        url = f"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/{lowercase_base_currency}.json"
-        resp = get(url)
-        data = resp.json()
-        rates = self.filter_data(data, lowercase_base_currency)
-        history = self.get_currency_history(base_currency)
-        new_history = {**history, **{data["date"]: rates}}
-        return new_history
-    
     def get_currency_info(self, currency) -> dict:
         document = self.get_currency_document(currency)
         info = {
@@ -102,6 +92,16 @@ class CEModel:
         documents = list(cursor)
         cursor.close()
         return documents
+    
+    def get_latest_currency_rates(self, base_currency) -> dict:
+        lowercase_base_currency = base_currency.lower()
+        url = f"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/{lowercase_base_currency}.json"
+        resp = get(url)
+        data = resp.json()
+        rates = self.filter_data(data, lowercase_base_currency)
+        history = self.get_currency_history(base_currency)
+        new_history = {**history, **{data["date"]: rates}}
+        return new_history
 
     def filter_data(self, data, base_currency):
         filtered_data = {}
@@ -117,7 +117,7 @@ class CEModel:
             currency_name = self.get_currency_name(currency)
             loading = f"Loading {currency_name} data..."
             print(f"{loading} {'[':>{40-len(loading)}}{count+1}/{len(self.currencies)}]")
-            history = self.get_new_currency_history(currency)
+            history = self.get_latest_currency_rates(currency)
             collection.update_one({"code": currency}, {"$set": {"history": history}})
         
         print("Finished process.")
