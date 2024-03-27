@@ -1,8 +1,10 @@
 import os
 from json import load
+from collections.abc import Iterator
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from requests import get
+from typing import Tuple
 
 
 path = os.path.dirname(__file__)
@@ -29,22 +31,22 @@ class CEModel:
     def get_chart_data(self, currency) -> list:
         history = self.get_currency_history(currency)
         dates = list(history)
-        quotes = [value[currency] for value in history.values()]
+        rates = [value[currency] for value in history.values()]
         chart_color = self.colors[currency]
-        return dates, quotes, chart_color
+        return dates, rates, chart_color
 
     @staticmethod
     def get_colors() -> list:
         with open(os.path.join(path, "static/assets/data/colors.json")) as colors:
             return load(colors)
     
-    def get_currencies_data(self):
+    def get_currencies_data(self) -> Iterator[Tuple[str, int, str]]:
         for currency in self.currencies:
             yield (
                 currency, self.get_currency_rate(currency), self.get_currency_status(currency)
             )
     
-    def get_currencies_codes(self):
+    def get_currencies_codes(self) -> Iterator[str]:
         for document in self.documents:
             yield document.get("code", "ERROR")
     
@@ -71,7 +73,7 @@ class CEModel:
         return document["name"]
 
     def get_currency_rate(self, currency, date=-1) -> list:
-        history = self.get_currency_history(currency)
+        history = self.get_currency_history(self.base_currency)
         last_date = list(history)[date]
         rate = history[last_date][currency]
         return rate
