@@ -1,0 +1,14 @@
+$sky-500: #0ea5e9;
+
+.input-group * {
+  transition-duration: 300ms;
+}
+
+.input-group:focus-within,
+.input-group:focus-within * {
+  border-color: $sky-500 !important;
+  
+  label {
+    color: $sky-500;
+  }
+}
