@@ -6,11 +6,14 @@ from pymongo.results import InsertOneResult
 
 from models.currency import Currency
 from services.currencies import CurrenciesService
+from server.core.logger import setup_logging
 
 
-router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+setup_logging()
+
 logger = logging.getLogger(__name__)
+
+router = APIRouter(tags=["Currencies"])
 
 
 @router.get("/api/currencies", response_model=list[Currency])
@@ -52,6 +55,7 @@ async def set_currency(
     response = await currencies_service.set_currency(currency)
     logger.info("Data set successfully!")
     return response
+    logger.info(f"Currency {currency.code} registered successfully!")
 
 
 @router.patch("/api/currency/{code}")
@@ -61,6 +65,7 @@ async def patch_currency(
         token: str = Depends(oauth2_scheme)
 ) -> None:
     currencies_service: CurrenciesService = request.app.state.currencies_service
-    print(f"Updating {currency.name} data...")
+
+    logger.info(f"Updating {currency.name} data...")
     response = await currencies_service.update_currency(currency)
-    print(f"Data updated successfully!")
+    logger.info(f"Data updated successfully!")

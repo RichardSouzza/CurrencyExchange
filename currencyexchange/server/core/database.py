@@ -13,15 +13,15 @@ class Database:
             self.client = AsyncIOMotorClient(self.uri)
             self.database = self.client.get_database(self.db_name)
             await self.client.admin.command("ping")
-            print("SUCCESS: Conectado ao MongoDB com sucesso!")
+            print("   SUCCESS   Connected to MongoDB successfully!")
         except Exception as error:
-            print(f"ERROR: Falha ao conectar ao MongoDB: {error}")
+            print(f"     ERROR   Failed to connect to MongoDB:\n    {error}")
             raise error
 
     async def disconnect(self) -> None:
         if self.client:
             self.client.close()
-            print("INFO: Database connection closed!")
+            print("       INFO   Database connection closed!")
 
     def get_collection(self, collection_name: str) -> AsyncIOMotorCollection[Any]:
         return self.database.get_collection(collection_name)
