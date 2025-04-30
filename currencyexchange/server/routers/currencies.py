@@ -4,9 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from pymongo.results import InsertOneResult
 
-from models.currency import Currency
-from services.currencies import CurrenciesService
-from server.core.logger import setup_logging
+from server.exceptions import *
+from server.infrastructure.logger import setup_logging
+from server.models import Currency
+from server.models import TokenData
+from server.routers.security import get_active_token
+from server.services.currencies import CurrenciesService
 
 
 setup_logging()
@@ -52,9 +55,7 @@ async def set_currency(
     if existent_currency:
         raise HTTPException(409, "There is already a currency with the same code.")
     
-    response = await currencies_service.set_currency(currency)
-    logger.info("Data set successfully!")
-    return response
+    response = await currencies_service.register_currency(currency)
     logger.info(f"Currency {currency.code} registered successfully!")
 
 
