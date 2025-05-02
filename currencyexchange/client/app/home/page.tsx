@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Hero from "./components/hero";
+import Hero from './components/hero';
 
 export default function Home() {
   return (
-    <div className="">
+    <div>
       <Hero />
     </div>
   );

@@ -3,5 +3,5 @@ export default function ExchangeLayout({
   }: {
     children: React.ReactNode
   }) {
-    return <section className="grow">{children}</section>
+    return <section className='grow'>{children}</section>
   };
