@@ -8,7 +8,7 @@ class CurrencyAlreadyExistsException(HTTPException):
 
 class InvalidTokenException(HTTPException):
     def __init__(self) -> None:
-        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token.")
+        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
 
 
 class OnlyAdminException(HTTPException):
