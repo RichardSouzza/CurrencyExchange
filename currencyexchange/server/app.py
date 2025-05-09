@@ -1,23 +1,18 @@
+import logging
 from contextlib import asynccontextmanager
-from os import getenv
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from server.core.settings import *
 from server.infrastructure.database import Database
-from server.routers.currencies import router as currencies_router
-from server.routers.security import router as security_router
-from server.services.currencies import CurrenciesService
+from server.infrastructure.logger import setup_logging
+from server.routers import currencies_router, external_router, security_router
+from server.services import CurrenciesService, ExternalService
 
 
-load_dotenv()
+setup_logging()
+logging.getLogger("watchfiles").setLevel(logging.CRITICAL)
 
-ATLAS_USER     = getenv("ATLAS_USER")     or ""
-ATLAS_PASSWORD = getenv("ATLAS_PASSWORD") or ""
-ATLAS_CLUSTER  = getenv("ATLAS_CLUSTER")  or ""
-ATLAS_DATABASE = getenv("ATLAS_DATABASE") or ""
-
-ATLAS_URI      = f"mongodb+srv://{ATLAS_USER}:{ATLAS_PASSWORD}@{ATLAS_CLUSTER}.mongodb.net/?retryWrites=true&w=majority"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,11 +21,29 @@ async def lifespan(app: FastAPI):
         db_name=ATLAS_DATABASE
     )
     await database.connect()
+
     app.state.currencies_service = CurrenciesService(database.database)
+    app.state.external_service = ExternalService()
+    
     yield
     await database.disconnect()
 
 
-app = FastAPI(title="CurrencyExchange", lifespan=lifespan)
+app = FastAPI(
+    title="CurrencyExchange",
+    summary="An API that provides data for the world's major currencies.",
+    version="2.0.0",
+    lifespan=lifespan,
+    contact={
+        "name": "CurrencyExchange",
+        "url": "https://github.com/RichardSouzza/CurrencyExchange",
+    },
+    license_info={
+        "name": "Mozilla Public License 2.0",
+        "url": "https://github.com/RichardSouzza/CurrencyExchange/blob/master/LICENSE",
+    },
+)
+
 app.include_router(currencies_router)
+app.include_router(external_router)
 app.include_router(security_router)

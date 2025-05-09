@@ -6,6 +6,11 @@ class CurrencyAlreadyExistsException(HTTPException):
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail="There is already a currency with the same code.")
 
 
+class CurrencyNotFoundException(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail="The requested currency does not exist.")
+
+
 class InvalidTokenException(HTTPException):
     def __init__(self) -> None:
         super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token.")
