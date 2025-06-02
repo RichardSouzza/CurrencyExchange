@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
 
+from server.core.settings import available_currencies
 from server.exceptions import *
 from server.infrastructure.security import get_active_token
 from server.models import AvailableCurrencies, CurrencyDocument, CurrencyRequest, OperationResult, TokenData, TokenType
@@ -15,7 +16,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["Currencies"])
 
 
-@router.get("/currencies_by_range", response_model=list[CurrencyDocument])
+@router.get("/currencies", response_model=list[str])
+async def get_all_available_currencies(
+    token: Annotated[TokenData, Depends(get_active_token)],
+    request: Request,
+) -> list[str]:
+    return available_currencies
+
+
+@router.get("/currencies_in_range", response_model=list[CurrencyDocument])
 async def get_currencies_in_range(
         token: Annotated[TokenData, Depends(get_active_token)],
         request: Request,
@@ -27,7 +36,7 @@ async def get_currencies_in_range(
     return currencies
 
 
-@router.get("/currencies_by_range/{code}", response_model=list[CurrencyDocument])
+@router.get("/currencies_in_range/{code}", response_model=list[CurrencyDocument])
 async def get_currencies_in_range_by_code(
         token: Annotated[TokenData, Depends(get_active_token)],
         request: Request,
